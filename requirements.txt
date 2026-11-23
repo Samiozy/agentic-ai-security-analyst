@@ -1,0 +1,5 @@
+# Python 3.11+; SDK provides MCP stdio server + client.
+mcp>=1.3,<2
+python-dotenv>=1.0,<2
+pytest>=8,<10
+# Optional semantic retrieval alternative: sentence-transformers (not needed for baseline)

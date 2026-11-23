@@ -1,0 +1,7 @@
+{
+  "_comment": "REPLACE service lab IP with your actual host-only Metasploitable IP. The web app is published on loopback only. Never add public targets.",
+  "targets": [
+    {"ip": "127.0.0.1", "ports": [3000]},
+    {"ip": "192.168.56.101", "ports": [21, 22, 23, 80, 139, 445, 3306]}
+  ]
+}
