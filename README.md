@@ -77,7 +77,8 @@ final_project/
 ```
 
 Most subfolders contain their own README. The original starter files remain
-unchanged in `reference/` so you can trace course concepts to implementation.
+in `reference/` so you can trace course concepts to implementation, with redirect
+safety fixes documented in that folder's README.
 
 ## 3. Prerequisites
 
