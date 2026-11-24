@@ -100,12 +100,26 @@ def _guard(url: str) -> str:
     return ""
 
 
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    """Never allow an authorized response to choose another destination."""
+
+    def redirect_request(self, request, fp, code, msg, headers, newurl):
+        raise ValueError(f"Redirect denied (not followed): HTTP {code}")
+
+
+def _open_request(req, timeout):
+    opener = urllib.request.build_opener(
+        urllib.request.HTTPSHandler(context=ssl.create_default_context()),
+        NoRedirect,
+    )
+    return opener.open(req, timeout=timeout)
+
+
 def _http_get(url: str, timeout: int = 8):
     """One ordinary GET. Returns (status, headers_dict, live, error)."""
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "edu-web-recon/1.0"})
-        with urllib.request.urlopen(req, timeout=timeout,
-                                    context=ssl.create_default_context()) as r:
+        with _open_request(req, timeout) as r:
             return r.status, dict(r.headers), True, ""
     except Exception as e:                       # offline / blocked -> cached fallback
         c = _CACHED.get(url)
@@ -168,8 +182,7 @@ def get_robots(url: str) -> str:
         # urlopen gives headers above; for the body do a second minimal GET.
         try:
             req = urllib.request.Request(robots_url, headers={"User-Agent": "edu-web-recon/1.0"})
-            with urllib.request.urlopen(req, timeout=8,
-                                        context=ssl.create_default_context()) as r:
+            with _open_request(req, 8) as r:
                 return r.read(2000).decode("utf-8", "replace")
         except Exception as e:
             error = str(e)
